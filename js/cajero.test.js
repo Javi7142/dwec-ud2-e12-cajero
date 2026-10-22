@@ -70,7 +70,7 @@ describe('esRetirable', () => {
 
 describe('calcularComision', () => {
   it('cobra el 2 % cuando supera el mínimo', () => {
-    expect(calcularComision(300, false)).toBe(7);
+    expect(calcularComision(300, false)).toBe(6);
   });
 
   it('cobra el mínimo cuando el 2 % es menor (caso límite: 60 €)', () => {
