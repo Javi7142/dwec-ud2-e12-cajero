@@ -91,9 +91,8 @@ export function desglosarBilletes(importe) {
   const partes = [];
   let restante = importe;
 
-  // BILLETES va de mayor a menor: con cada billete se usan tantos como quepan (algoritmo voraz),
-  // que da el menor número de billetes porque cada valor es múltiplo del siguiente
-  // o, como el 20 y el 10, no hay un reparto mejor.
+  // BILLETES va de mayor a menor: con cada uno se usan tantos como quepan (algoritmo voraz).
+  // Con estos billetes (50, 20, 10 y 5) el reparto voraz da siempre el menor número de billetes.
   for (const billete of BILLETES) {
     const cantidad = Math.floor(restante / billete);
     if (cantidad > 0) {
