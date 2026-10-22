@@ -27,8 +27,19 @@ export const COMISION_MINIMA = 1.5;
  * validarImporte('cien'); // null
  */
 export function validarImporte(texto) {
-  // TODO
-  return null;
+  const limpio = texto.trim();
+  // El texto vacío se comprueba aparte: Number('') da 0 y no es un error de conversión.
+  if (limpio === '') {
+    return null;
+  }
+
+  // Se cambia la coma por el punto porque Number solo entiende el punto decimal.
+  // No se usa parseFloat porque aceptaría textos como '50€' o '12abc' (daría 50 y 12).
+  const importe = Number(limpio.replace(',', '.'));
+  if (!Number.isFinite(importe) || importe <= 0) {
+    return null;
+  }
+  return importe;
 }
 
 /**
@@ -41,8 +52,8 @@ export function validarImporte(texto) {
  * esRetirable(72); // false
  */
 export function esRetirable(importe) {
-  // TODO
-  return false;
+  // Que el importe sea positivo ya lo garantiza validarImporte.
+  return Number.isInteger(importe) && importe % 5 === 0 && importe <= LIMITE_RETIRADA;
 }
 
 /**
@@ -59,8 +70,13 @@ export function esRetirable(importe) {
  * calcularComision(300, false); // 6
  */
 export function calcularComision(importe, esCliente) {
-  // TODO
-  return 0;
+  if (esCliente) {
+    return 0;
+  }
+
+  const comision = Math.max((importe * COMISION_NO_CLIENTE) / 100, COMISION_MINIMA);
+  // Se redondea a céntimos: 2 % de ciertos importes no es exacto en binario.
+  return Math.round(comision * 100) / 100;
 }
 
 /**
@@ -72,6 +88,19 @@ export function calcularComision(importe, esCliente) {
  * desglosarBilletes(60); // '1 x 50 € + 1 x 10 €'
  */
 export function desglosarBilletes(importe) {
-  // TODO
-  return '';
+  const partes = [];
+  let restante = importe;
+
+  // BILLETES va de mayor a menor: con cada billete se usan tantos como quepan (algoritmo voraz),
+  // que da el menor número de billetes porque cada valor es múltiplo del siguiente
+  // o, como el 20 y el 10, no hay un reparto mejor.
+  for (const billete of BILLETES) {
+    const cantidad = Math.floor(restante / billete);
+    if (cantidad > 0) {
+      partes.push(`${cantidad} x ${billete} €`);
+      restante -= cantidad * billete;
+    }
+  }
+
+  return partes.join(' + ');
 }
